@@ -1,0 +1,185 @@
+﻿
+@section Styles{
+    <style>
+
+    </style>
+}
+
+<h1>
+    Address
+</h1>
+
+
+ <select id="Select">
+    <option>請選擇</option>
+</select>
+&nbsp;
+<select id="Select2">
+    <option>請選擇</option>
+</select>
+&nbsp;
+<select id="Select3">
+    <option>請選擇</option>
+</select>
+
+<div id="Message"></div> 
+
+@* <h1>Show</h1>
+<div>
+    <input type="number" id="id1" />
+    <hr />
+    <img id="img" class="w-50 img-thumbnail" />
+</div>
+ *@
+@section Scripts{
+    <script>
+
+        (async () => {
+            const api = '@Url.Content("~/Api/Index")'
+            const response = await fetch(api);
+            const cicties = await response.json();
+
+            const eleCities = cicties.map(city => `<option value="${city}">${city}</option>`)
+
+            //s.innerHTML = eleCities.join("");
+            s1.insertAdjacentHTML('beforeend',eleCities.join(""))
+            /*const api2 = '@Url.Content("~/Api/Avatar")/${num.value}'
+
+
+            const response2 = await fetch(api2);
+            const pic = await response2.blob();
+            img.src = URL.createObjectURL(pic);*/
+
+        })();
+
+        const s1 = document.querySelector('#Select')
+        const s2 = document.querySelector('#Select2')
+        const s3 = document.querySelector('#Select3')
+
+        s1.addEventListener('change', async () => {
+
+            const cicties = s1.value;
+
+            // 清空城市選單和路名選單
+            const citySelect = document.getElementById('Select');
+            citySelect.innerHTML = '<option value="">請選擇城市</option>';
+            citySelect.disabled = false;
+
+            const streetSelect = document.getElementById('Select2');
+            streetSelect.innerHTML = '<option value="">請先選擇城市</option>';
+            streetSelect.disabled = true;
+
+            if (cicties) {
+
+                const api = `@Url.Content("~/Api/Index1/")?cities=${cicties}`
+                const response = await fetch(api);
+                const sites = await response.json();
+                const eleSites = sites.map(site => `<option value="${site}">${site}</option>`)
+
+                s2.insertAdjacentHTML('beforeend', eleSites.join(""))
+                
+            }
+        });
+
+        s2.addEventListener('change', async () => {
+
+            const Sites = s2.value;
+
+            // 清空城市選單和路名選單
+            const citySelect = document.getElementById('Select');
+            citySelect.innerHTML = '<option value="">請選擇城市</option>';
+            citySelect.disabled = false;
+
+            const streetSelect = document.getElementById('Select2');
+            streetSelect.innerHTML = '<option value="">請先選擇城市</option>';
+            streetSelect.disabled = true;
+
+            if (Sites) {
+
+                const api = `@Url.Content("~/Api/Index2/")?sites=${Sites}`
+                const response = await fetch(api);
+                const Roads = await response.json();
+                const eleRoads = Roads.map(Road => `<option value="${Road}">${Road}</option>`)
+
+                s3.insertAdjacentHTML('beforeend', eleRoads.join(""))
+
+            }
+        });
+
+
+
+
+
+        //const d = document.querySelector('#Message')
+        //const num = document.querySelector('#id1')
+        /*s.addEventListener('change', () => {
+            d.textContent = s.value;
+
+        })
+
+        num.addEventListener('keydown', async (event) => {
+            // console.log(numId.value)
+            if (event.which === 13) {
+                const api = `@Url.Content("~/api/avatar")/${num.value}`
+                const response = await fetch(api)
+                if (response.ok) {
+                    const datas = await response.blob()
+                    //顯示圖片
+                    img.src = URL.createObjectURL(datas)
+                } else {
+                    alert('找不到圖')
+                }
+            }
+
+        })*/
+
+        /*document.addEventListener('DOMContentLoaded', function () {
+            // 在頁面載入時呼叫 API 來獲取所有省份
+            fetch('https://example.com/api/provinces')
+                .then(response => response.json())
+                .then(provinces => {
+                    const provinceSelect = document.getElementById('province');
+                    provinces.forEach(province => {
+                        const option = document.createElement('option');
+                        option.value = province.id;
+                        option.text = province.name;
+                        provinceSelect.add(option);
+                    });
+                })
+                .catch(error => console.error('無法載入省份:', error));
+                
+            // 當用戶選擇省份時，動態加載對應的城市
+            
+
+            // 當用戶選擇城市時，動態加載對應的路名
+            document.getElementById('city').addEventListener('change', function () {
+                const cityId = this.value;
+
+                // 清空路名選單
+                const streetSelect = document.getElementById('street');
+                streetSelect.innerHTML = '<option value="">請選擇路名</option>';
+                streetSelect.disabled = false;
+
+                if (cityId) {
+                    fetch(`https://example.com/api/streets?city_id=${cityId}`)
+                        .then(response => response.json())
+                        .then(streets => {
+                            streets.forEach(street => {
+                                const option = document.createElement('option');
+                                option.value = street.id;
+                                option.text = street.name;
+                                streetSelect.add(option);
+                            });
+                        })
+                        .catch(error => console.error('無法載入路名:', error));
+                }
+            });
+        });
+        
+        
+        const api2 = `@Url.Content("~/Api/Index2/")?cities=${cicties}`
+        const response2 = await fetch(api2);
+        const Site = await response2.json();
+        const eleSite = Site.map(city => `<option value="${Site}">${Site}</option>`)*/
+    </script>
+}

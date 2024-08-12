@@ -1,0 +1,76 @@
+﻿@{
+    ViewData["Title"] = "Register";
+}
+
+
+@section Styles {
+    <style>
+
+    </style>
+}
+<h1>Register</h1>
+
+<div class="row">
+    <div class="col-3"></div>
+    <form id="f1">
+        <div class="col-6">
+            <div class="mb-3">
+                <label for="inputName" class="form-label" >姓名</label>
+                <input type="text" class="form-control" id="inputName" name="userName">
+            </div>
+            <div class="mb-3">
+                <label for="inputEmail" class="form-label" >電子郵件</label>
+                <input type="text" class="form-control" id="inputEmail" name="userEmail">
+            </div>
+            <div class="mb-3">
+                <label for="inputAge" class="form-label" >年紀</label>
+                <input type="text" class="form-control" id="inputAge" name="userAge">
+            </div>
+            <div class="mb-3">
+                <label for="cutomefile" class="form-label">圖片上傳</label>
+                <input type="file" class="form-control" id="cutomefile" name="photo">
+                <img id="img1" class="mt-3 w-50 img-thumbnail" />
+            </div>
+            <button type="submit" id="btn1" class="btn btn-primary">Click</button>
+
+            <div id="div1" class="alert alert-info mt-3"></div>
+        </div>
+    </form>
+    <div class="col-3"></div>
+</div>
+
+@section Scripts {
+    <script>
+        const btn = document.querySelector('#btn1')
+        const divInfo = document.querySelector('#div1')
+
+        const aFile = document.querySelector('#cutomefile')
+        const theImg = document.querySelector('#img1')
+
+        aFile.addEventListener('change', () => {
+            const theFile = aFile.files[0]
+            // console.log(theFile.name)
+            const reader = new FileReader()
+            reader.readAsDataURL(theFile)
+            reader.addEventListener('load', () => {
+                theImg.src = reader.result
+            })
+        })
+
+        btn.addEventListener('click',async (event) => {
+            event.preventDefault()
+            const form = new FormData(document.querySelector('#f1'))
+
+            const api = '@Url.Content("~/api/register2/")'
+            const response = await fetch(api, {
+                method: 'POST',
+                body: form
+            })
+
+            const data = await response.text()
+            divInfo.innerHTML = `<h3>${data}</h3>`
+
+        })
+
+    </script>
+}

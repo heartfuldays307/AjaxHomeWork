@@ -1,0 +1,50 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+
+@section Styles{
+    <style>
+
+    </style>
+}
+
+<div class="row">
+    <div class="card-group" id="Card1" class ="row">
+    
+
+    </div>
+</div>
+@section Scripts{
+    <script src="~/js/travel.js"></script>
+    <script>
+        //console.log(spots)
+        //const empTable = document.querySelector('#table1>tbody')
+        const empCard = document.querySelector('#Card1')
+        const datas = spots.CommonFormat.Section.map(function (spot) {
+            const { RowNumber, address, file, stitle, xurl } = spot  //{"name":"Tom","workYears":10 }
+            const image = spot.file.img[0].text
+            const des = spot.file.img[0].description
+            return `
+            <div class="col-sm-4">
+                <div class="card" style="width: 18rem;">
+                    <img src="${image}" class="card-img-top" alt="${des}" >
+                    <div class="card-body" >
+                        <h5 class="card-title">${stitle}</h5>
+                        <p class="card-text" >${address}</p>
+                        <a href="${xurl}" class="btn btn-primary">Go</a>
+                    </div>
+                </div>
+                <br><br />
+            </div>
+            
+            `
+        })
+
+        empCard.innerHTML = datas.join("")
+
+    </script>
+}
+
+
+

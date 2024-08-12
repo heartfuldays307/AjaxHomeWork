@@ -1,0 +1,167 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+
+@section Styles{
+    <style>
+        #list li {
+            background-color: #f8f9fa;
+            padding: 10px 20px;
+            margin-bottom: 10px;
+            border-radius: 15px;
+            list-style-type: none; /* 去掉預設的列表符號 */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 添加陰影讓列表項目更具立體感 */
+            transition: transform 0.2s, box-shadow 0.2s; /* 平滑過渡效果 */
+        }
+
+        #list li:hover {
+            transform: scale(1.05); /* 當滑鼠懸停時放大效果 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 加強陰影效果 */
+        }
+    </style>
+}
+<h1>台北市景點</h1>
+
+<div class="row mb-3">
+    <div class="col-2" >
+        <select class="form-select" aria-label="Default select example" id="select1">
+            <option  value="9">顯示9筆資料</option>
+            <option  value="12">顯示12筆資料</option>
+            <option  value="15">顯示15筆資料</option>
+         </select>
+    </div>
+    <div class="col-6">
+        <nav aria-label="...">
+            <ul class="pagination pagination-sm" id="ul1">               
+            </ul>
+        </nav>
+    </div>
+    <div class="col-2" >
+        <select class="form-select" aria-label="Default select example" id="select2">
+            <option  value="asc">升冪排序</option>
+            <option  value="desc">降冪排序</option>
+        </select>
+    </div>
+    <div class="col-2">
+        <input type="search" placeholder="搜尋景點" id="inputSearch" class="form-control" />
+    </div>
+</div>
+
+<div class="row" >
+    <ul class="d-flex justify-content-between" id="list">
+    </ul>
+</div>
+
+
+<div class="row">
+    <div class="card-group row row-cols-1 row-cols-md-3 g-4" id="Card1" >
+    
+
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        const searchData = {
+            "categoryId": 1,
+            "keyword": "",
+            "page": 1,
+            "pageSize": 9,
+            "sortType": "asc",
+            "sortBy": "categoryId"
+        }
+        const empCard = document.querySelector('#Card1')
+        const ulPage = document.querySelector('#ul1')
+        const inpSearch = document.querySelector('#inputSearch')
+        const select1 = document.querySelector('#select1')
+        const select2 = document.querySelector('#select2')
+        const list = document.querySelector('#list')
+        
+        //幾筆資料
+        select1.addEventListener('change',() => {
+            searchData.pageSize = select1.value
+            loadSpots()
+        })
+        //如何排序
+        select2.addEventListener('change',() => {
+            searchData.sortType = select2.value
+            loadSpots()
+        })
+
+        //關鍵字搜尋
+        inpSearch.addEventListener('keydown', event => {
+            if (event.which === 13) {
+                searchData.keyword = inpSearch.value
+                loadSpots()
+            }
+        })
+
+        //載入景點資料
+        const loadSpots = async () => {
+            const api = '@Url.Content("~/Api/Spots")'
+            const response = await fetch(api, {
+                method:'POST',
+                body: JSON.stringify(searchData),
+                headers: {
+                    'Content-Type':'application/json'
+                }
+            })
+
+            const data = await response.json()
+
+            console.log(data)
+        
+            const datas = data.spotsResult.map(function (spot) {
+                const { categoryId, address, spotTitle, spotDescription, spotImage } = spot  
+
+                return `
+                <div class="col-sm-4">
+                    <div class="card" style="width: 18rem;">
+                        <img src="${spotImage}" class="card-img-top" alt="${spotTitle}" >
+                        <div class="card-body" >
+                            <h5 class="card-title">${spotDescription.length <= 100 ? spotDescription : spotDescription.substring(0,100)}...</h5>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-body-secondary" > ${ address } </small>
+                        </div>
+                    </div>
+                    <br><br />
+                </div>
+                `
+            })
+
+            empCard.innerHTML = datas.join("")
+
+            let liPages = ""
+            for(let i = 1, max = data.totalPages; i <= max; i++) {
+                liPages += `<li class="page-item" onclick="pagingHandler(${i})"><a class="page-link">${i}</a></li>`
+            }
+            ulPage.innerHTML = liPages;
+            
+            liPages = ""
+            for(i = 0; i < data.categoryName.length; i++){
+                liPages += `<li class="list-group-item list-group-item-primary" onclick="IdClicked(${i+1})">${data.categoryName[i]}</li>`
+            }
+            list.innerHTML = liPages;
+
+        }
+
+        const pagingHandler = page => {
+            searchData.page = page
+            loadSpots()
+        }
+
+        const IdClicked = Id =>{
+            console.log(Id)
+            searchData.categoryId = Id
+            loadSpots()
+        }
+
+        loadSpots();
+
+    </script>
+}
+
+
+
